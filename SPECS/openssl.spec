@@ -23,7 +23,7 @@
 Summary: Utilities from the general purpose cryptography library with TLS implementation
 Name: openssl
 Version: 1.0.2k
-Release: 26%{?dist}
+Release: 27%{?dist}
 Epoch: 1
 # We have to remove certain patented algorithms from the openssl source
 # tarball with the hobble-openssl script which is included below.
@@ -116,6 +116,10 @@ Patch114: openssl-1.0.2k-cve-2021-23841.patch
 Patch115: openssl-1.0.2k-cve-2021-3712.patch
 Patch116: openssl-1.0.2k-cve-2022-0778.patch
 Patch117: openssl-1.0.2k-cve-2023-0286-X400.patch
+
+# XCP-ng patches
+# https://github.com/sidneys/homebrew-homebrew/issues/23#issuecomment-1731492984
+Patch1000: openssl-1.0.2k-update-expiring-certificates.patch
 
 License: OpenSSL
 Group: System Environment/Libraries
@@ -264,6 +268,7 @@ cp %{SOURCE12} %{SOURCE13} crypto/ec/
 %patch115 -p1 -b .read-buff
 %patch116 -p1 -b .cve-2022-0778
 %patch117 -p1 -b .cve-2023-0286
+%patch1000 -p1 -b .update-expiring-certificates
 
 sed -i 's/SHLIB_VERSION_NUMBER "1.0.0"/SHLIB_VERSION_NUMBER "%{version}"/' crypto/opensslv.h
 
@@ -563,6 +568,9 @@ rm -rf $RPM_BUILD_ROOT/%{_libdir}/fipscanister.*
 %postun libs -p /sbin/ldconfig
 
 %changelog
+* Mon May 27 2024 Guillaume Thouvenin <guillaume.thouvenin@vates.tech> - 1:1.0.2k-27
+- Fixes RSA key verify error
+
 * Fri Mar 10 2023 Dmitry Belyavskiy <dbelyavs@redhat.com> - 1:1.0.2k-26
 - Fixes CVE-2023-0286 X.400 address type confusion in X.509 GeneralName
 - Resolves: rhbz#2176790
